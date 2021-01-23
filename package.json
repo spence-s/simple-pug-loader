@@ -1,0 +1,60 @@
+{
+  "name": "better-pug-loader",
+  "description": "Pug loader for webpack that's better than the original",
+  "version": "0.0.0",
+  "author": "Spencer Snyder <sasnyde2@gmail.com> (https://spencersnyder.io)",
+  "bugs": {
+    "url": "https://github.com/Spence-S/better-pug-loader/issues",
+    "email": "sasnyde2@gmail.com"
+  },
+  "contributors": [
+    "Spencer Snyder <sasnyde2@gmail.com> (https://spencersnyder.io)"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@commitlint/cli": "latest",
+    "@commitlint/config-conventional": "latest",
+    "ava": "latest",
+    "codecov": "latest",
+    "cross-env": "latest",
+    "eslint": "latest",
+    "eslint-config-xo-lass": "latest",
+    "fixpack": "latest",
+    "husky": "latest",
+    "lint-staged": "latest",
+    "nyc": "latest",
+    "remark-cli": "latest",
+    "remark-preset-github": "latest",
+    "xo": "latest"
+  },
+  "engines": {
+    "node": ">= 10"
+  },
+  "homepage": "https://github.com/Spence-S/better-pug-loader",
+  "keywords": [
+    "better-pug-loader",
+    "lass"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Spence-S/better-pug-loader"
+  },
+  "scripts": {
+    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "lint": "yarn run lint:js && yarn run lint:md",
+    "lint:js": "xo",
+    "lint:md": "remark . -qfo",
+    "pretest": "yarn run lint",
+    "test": "cross-env NODE_ENV=test ava",
+    "test-coverage": "cross-env NODE_ENV=test nyc yarn run test"
+  },
+  "xo": {
+    "prettier": true,
+    "space": true,
+    "extends": [
+      "xo-lass"
+    ]
+  }
+}

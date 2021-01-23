@@ -1,0 +1,9 @@
+{
+  "extension": [
+    ".js"
+  ],
+  "report-dir": "./coverage",
+
+  "temp-dir": "./.nyc_output"
+
+}
