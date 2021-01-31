@@ -22,31 +22,25 @@
 
 The defacto loader for compiling pug templates is [`pug-loader`](https://github.com/pugjs/pug-loader).
 
-`simple-pug-loader` does the same thing but better for many use cases.
+`simple-pug-loader` does the same thing, only better for many use cases.
 
-Pug loader, while it can work well, has not been well maintained. It suffers from many issues that cause it to not respect normal pug scoping rules
-and it also handles includes and mixins clunkily. It uses its own - somewhat complicated - way of parsing out includes and mixins and then using webpack requires to get the code loaded into the module correctly.
-While this works satisfactorily many times, with more complexities in the pug code, you end up running into a lot of weird and unexpected issues with the front end
-templates it creates and weird bugs arise from where variables aren't being passed to included templates and mixins properly. Because of the odd way it requires
-some instances of pug templates, templates don't respond and rebuild correctly as expected when watching using `webpack --watch`. You can see a lot of the same gripes
-over and over in the [issues](https://github.com/pugjs/pug-loader/issues).
+#### Problems with pug-loader
+Pug loader, while it can work well, has not been well maintained. It suffers from many issues that cause it to not respect normal pug scoping rules and it also handles includes and mixins a bit clunkily. It uses its own - somewhat complicated - way of parsing out includes and mixins and then replaces them with `require` statements in order to get the code loaded into the module correctly. While this works satisfactorily many times, with more complexities in the pug code, you end up running into a lot of unexpected issues when the webpack `require` works completely different from pug `include`. Because of the odd way it requires some of the included pug templates, the templates are "orphaned" in the webpack dependency graph and don't respond correctly using `webpack --watch`, they either don't rebuild at all - or they rebuild the orphaned module and not the parent, so it makes watching untrust worthy. You can see a lot of the same gripes over and over in the [issues](https://github.com/pugjs/pug-loader/issues).
 
-This loader is just a simple wrapper around pugs `compileClientWithDependenciesTracked` function. The loader tells webpack
-to track any dependencies using pugs own methods of tracking rather than monkey patching it with a custom function/pug plugin like `pug-loader` does. Then we give webpack
-the list of dependencies for the file, so it never gets confused on what to build when a file changes.
+#### What does simple-pug-loader do better?
+This loader is just a simple wrapper around pugs `compileClientWithDependenciesTracked` function. We compile directly using pug, then we hand the list of dependencies for the file straight to webpack so it never gets confused on what to build when a file changes. Because it's just pug and no sugar - it's just a lot more predictable.
 
-We only a slight change to pugs algorithm when an `include` is not another pug file, but rather a different file type altogether.
-This is called a `raw include` under the hood. In the case of raw includes, we then tell webpack require the raw module independently of pug as a string.
-This embeds the raw file right in the pug template as a string as is intended in most cases and the file is tracked as a dependencie properly in webpack.
+#### Caveats
+We _only_ slightly change pugs algorithm when an `include` is not referencing another pug file but rather a different file type altogether. This is called a `raw include` under the hood. We do this because in some cases, pug doesn't compile to a valid JS function when these files are processed and webpack will throw errors. In the case of raw includes, we make webpack require the raw module independently of pug as a string. Then we embed the raw file right in the pug template as a string (just as pug was originally trying to do) and the file is tracked as a dependency in webpack properly. As a consequence of this, locals and variables will not be available in the non-pug include. It is reccomended that you not `include` any other file type anyway, but rather pass `require` as a global variable into your template and require any non-pug assets instead of including them, unless you need to render the file on the server sometimes as well.
 
-While I haven't seen the exact reasons for `pug-loader` forcing webpack requires in the situations it does, I'm sure there is one and if you run across cases where this loader doesn't work for you, but `pug-loader` does, please file an issue!
+#### Personal Needs
+While I haven't seen the exact reasons for `pug-loader` forcing webpack requires in the situations it does, I'm sure there are good reasons for it and if you run across cases where this loader doesn't work for you and `pug-loader` does, please file an issue! I will try to prioritize getting anything working for anyone who wants to use a more stable and maintained pug loader.
 
-I personally haven't found use cases that do not benefit from the simpler approach I am employing with this plugin yet.
+My use personal use case is that I render many templates both server and client side and I want predictability from both and everything I have tested thus far has benefitted from this simpler approach that I am employing with this plugin.
 
-My use personal use case is that I render many templates both server and client side and I want predictability from both.
+### Webpack Versions
 
-### Versions
-This loader will work best on Webpack 5 and likely 4. No guarantee for any lesser versions. Please file issues for webpack 4 or 5 problems.
+This loader will work best on Webpack 5 and likely 4 and node 12+. No guarantee for any lesser versions. Please file issues for webpack 4 or 5 problems.
 
 ## Install
 

@@ -30,8 +30,6 @@
     "memfs": "^3.2.0",
     "nyc": "latest",
     "pug": "^2.0.4",
-    "remark-cli": "latest",
-    "remark-preset-github": "latest",
     "webpack": "^5.17.0",
     "webpack-cli": "^4.4.0",
     "webpack-dev-server": "^3.11.2",
