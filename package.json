@@ -1,6 +1,6 @@
 {
-  "name": "better-pug-loader",
-  "description": "Pug loader for webpack that's better than the original",
+  "name": "simple-pug-loader",
+  "description": "Pug loader for webpack that's more simple than the original",
   "version": "0.0.0",
   "author": "Spencer Snyder <sasnyde2@gmail.com> (https://spencersnyder.io)",
   "bugs": {
@@ -10,25 +10,33 @@
   "contributors": [
     "Spencer Snyder <sasnyde2@gmail.com> (https://spencersnyder.io)"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "dedent": "^0.7.0",
+    "file-type": "^16.2.0",
+    "loader-utils": "^2.0.0",
+    "pug-walk": "^2.0.0",
+    "raw-loader": "^4.0.2",
+    "resolve": "^1.19.0"
+  },
   "devDependencies": {
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
-    "ava": "latest",
-    "codecov": "latest",
+    "clean-webpack-plugin": "^3.0.0",
     "cross-env": "latest",
-    "eslint": "latest",
-    "eslint-config-xo-lass": "latest",
     "fixpack": "latest",
     "husky": "latest",
     "lint-staged": "latest",
+    "memfs": "^3.2.0",
     "nyc": "latest",
     "remark-cli": "latest",
     "remark-preset-github": "latest",
+    "webpack": "^5.17.0",
+    "webpack-cli": "^4.4.0",
+    "webpack-dev-server": "^3.11.2",
     "xo": "latest"
   },
   "engines": {
-    "node": ">= 10"
+    "node": ">= 12"
   },
   "homepage": "https://github.com/Spence-S/better-pug-loader",
   "keywords": [
@@ -37,6 +45,7 @@
   ],
   "license": "MIT",
   "main": "index.js",
+  "peerDependencies": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/Spence-S/better-pug-loader"
@@ -45,16 +54,18 @@
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "lint": "yarn run lint:js && yarn run lint:md",
     "lint:js": "xo",
-    "lint:md": "remark . -qfo",
-    "pretest": "yarn run lint",
-    "test": "cross-env NODE_ENV=test ava",
-    "test-coverage": "cross-env NODE_ENV=test nyc yarn run test"
+    "lint:md": "remark . -qfo"
   },
   "xo": {
     "prettier": true,
     "space": true,
-    "extends": [
-      "xo-lass"
-    ]
+    "settings": {
+      "import/resolver": {
+        "node": {}
+      }
+    },
+    "rules": {
+      "unicorn/prevent-abbreviations": "off"
+    }
   }
 }
