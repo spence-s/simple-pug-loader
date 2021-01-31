@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "author": "Spencer Snyder <sasnyde2@gmail.com> (https://spencersnyder.io)",
   "bugs": {
-    "url": "https://github.com/Spence-S/better-pug-loader/issues",
+    "url": "https://github.com/Spence-S/simple-pug-loader/issues",
     "email": "sasnyde2@gmail.com"
   },
   "contributors": [
@@ -40,7 +40,7 @@
   "engines": {
     "node": ">= 12"
   },
-  "homepage": "https://github.com/Spence-S/better-pug-loader",
+  "homepage": "https://github.com/Spence-S/simple-pug-loader",
   "keywords": [
     "better-pug-loader",
     "lass"
@@ -52,7 +52,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Spence-S/better-pug-loader"
+    "url": "https://github.com/Spence-S/simple-pug-loader"
   },
   "scripts": {
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
