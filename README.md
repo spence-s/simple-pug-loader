@@ -25,15 +25,21 @@ The defacto loader for compiling pug templates is [`pug-loader`](https://github.
 `simple-pug-loader` does the same thing, only better for many use cases.
 
 #### Problems with pug-loader
+
 Pug loader, while it can work well, has not been well maintained. It suffers from many issues that cause it to not respect normal pug scoping rules and it also handles includes and mixins a bit clunkily. It uses its own - somewhat complicated - way of parsing out includes and mixins and then replaces them with `require` statements in order to get the code loaded into the module correctly. While this works satisfactorily many times, with more complexities in the pug code, you end up running into a lot of unexpected issues when the webpack `require` works completely different from pug `include`. Because of the odd way it requires some of the included pug templates, the templates are "orphaned" in the webpack dependency graph and don't respond correctly using `webpack --watch`, they either don't rebuild at all - or they rebuild the orphaned module and not the parent, so it makes watching untrust worthy. You can see a lot of the same gripes over and over in the [issues](https://github.com/pugjs/pug-loader/issues).
 
 #### What does simple-pug-loader do better?
+
 This loader is just a simple wrapper around pugs `compileClientWithDependenciesTracked` function. We compile directly using pug, then we hand the list of dependencies for the file straight to webpack so it never gets confused on what to build when a file changes. Because it's just pug and no sugar - it's just a lot more predictable.
 
 #### Caveats
-We _only_ slightly change pugs algorithm when an `include` is not referencing another pug file but rather a different file type altogether. This is called a `raw include` under the hood. We do this because in some cases, pug doesn't compile to a valid JS function when these files are processed and webpack will throw errors. In the case of raw includes, we make webpack require the raw module independently of pug as a string. Then we embed the raw file right in the pug template as a string (just as pug was originally trying to do) and the file is tracked as a dependency in webpack properly. As a consequence of this, locals and variables will not be available in the non-pug include. It is reccomended that you not `include` any other file type anyway, but rather pass `require` as a global variable into your template and require any non-pug assets instead of including them, unless you need to render the file on the server sometimes as well.
+
+We _only_ slightly change pugs algorithm when an `include` is not referencing another pug file but rather a different file type altogether. This is called a `raw include` under the hood. We do this because in some cases, pug doesn't compile to a valid JS function when these files are processed and webpack will throw errors. In the case of raw includes, we make webpack require the raw module independently. If you have not defined a way for webpack to handle the included file-type - an error will be thrown. The file is tracked as a dependency in webpack properly according to whatever rules you have set.
+
+As a consequence of this, locals and variables will not be available in the non-pug include. If you, for instance, include an svg file in your template like `include ../imgs/logo.svg`. You would need to have a block in webpack telling it to handle svgs by adding an [asset type](https://webpack.js.org/guides/asset-modules/) for svg in webpack 5 or using raw or file loader in webpack 4 and below.
 
 #### Personal Needs
+
 While I haven't seen the exact reasons for `pug-loader` forcing webpack requires in the situations it does, I'm sure there are good reasons for it and if you run across cases where this loader doesn't work for you and `pug-loader` does, please file an issue! I will try to prioritize getting anything working for anyone who wants to use a more stable and maintained pug loader.
 
 My use personal use case is that I render many templates both server and client side and I want predictability from both and everything I have tested thus far has benefitted from this simpler approach that I am employing with this plugin.
@@ -94,16 +100,14 @@ The following [options] are available to be set for the loader. They are all map
 
 ### Embedded resources
 
-Try to use `require` for all your embedded resources, to process them with webpack.
+For clarity you should try to use `require` for all your raw includes and embedded resources.
 
 ```pug
 div
   img(src=require("./my/image.png"))
 ```
 
-Remember, you need to configure loaders for these file types too. You might be interested in the [file loader][file-loader].
-
-If a non-pug resource is included with `include resource.whatever`, `simple-pug-loader` will load it as a raw string automatically.
+If a non-pug resource is included with `include resource.whatever`, `simple-pug-loader` will change it to a require call under the hood automatically.
 
 ## Contributors
 

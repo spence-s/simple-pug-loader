@@ -4,21 +4,24 @@ const nodeResolve = require('resolve').sync;
 const dedent = require('dedent');
 const walk = require('pug-walk');
 
+/*
+ * Enusre pug and runtime are from same version
+ */
 const pugPath = require.resolve('pug');
-
+const pug = require(pugPath);
 const runtimePath = nodeResolve('pug-runtime', {
   basedir: path.dirname(pugPath)
 });
 
-const rawLoaderPath = nodeResolve('raw-loader', { basedir: __dirname });
-
-const pug = require(pugPath);
-
 module.exports = function (source) {
-  // All the cool loaders do it
+  /*
+   * All the cool loaders do it
+   */
   if (this.cacheable) this.cacheable(true);
 
-  // Options and context
+  /*
+   * Options and context
+   */
   const loaderContext = this;
   const options = loaderUtils.getOptions(this) || {};
   const filename = loaderContext.resourcePath;
@@ -27,6 +30,12 @@ module.exports = function (source) {
 
   source = typeof source === 'string' ? source : source.toString();
 
+  /*
+   * The plugin is hooked into right before pug "links" the included files,
+   * which means right before it inlines the included file content into the
+   * template. Here, we remove raw includes and replace them with
+   * "- require("path/to/include.notpug")
+   */
   const plugin = {
     preLink(ast) {
       return walk(ast, (node, replace) => {
@@ -37,7 +46,7 @@ module.exports = function (source) {
         ) {
           const val = `require(${loaderUtils.stringifyRequest(
             loaderContext,
-            rawLoaderPath + '?esModule=false!' + node.file.fullPath
+            node.file.fullPath
           )})`;
 
           replace({
@@ -68,7 +77,9 @@ module.exports = function (source) {
       plugins: [plugin].concat(options.plugins || [])
     };
 
-    // Compile the pug
+    /*
+     * Compile the pug
+     */
     const compilation = pug.compileClientWithDependenciesTracked(
       source,
       pugOptions
@@ -76,24 +87,32 @@ module.exports = function (source) {
 
     func = compilation.body;
 
-    // Let webpack know to watch the dependencies
+    /*
+     * Let webpack know to watch the dependencies
+     */
     if (compilation.dependencies && compilation.dependencies.length > 0)
       compilation.dependencies.forEach((dep) =>
         loaderContext.addDependency(dep)
       );
   } catch (error) {
-    // Catch errors if needed
+    /*
+     * Catch errors if needed
+     */
     loaderContext.callback(error);
     return;
   }
 
-  // Add the runtime dependency
+  /*
+   * Add the runtime dependency
+   */
   const requireRuntimeString =
     'var pug = require(' +
     loaderUtils.stringifyRequest(loaderContext, '!' + runtimePath) +
     ');\n\n';
 
-  // Return the compiled function to be processes as a JS module now
+  /*
+   * Return the compiled function to be processes as a JS module now
+   */
   loaderContext.callback(
     null,
     dedent`
