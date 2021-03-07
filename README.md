@@ -53,7 +53,7 @@ This loader will work best on Webpack 5 and likely 4 and node 12+. No guarantee 
 [npm][]:
 
 ```sh
-npm install -d simple-pug-loader
+npm install simple-pug-loader --save-dev
 ```
 
 [yarn][]:
