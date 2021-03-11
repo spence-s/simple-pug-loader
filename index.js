@@ -1,7 +1,6 @@
 const path = require('path');
 const loaderUtils = require('loader-utils');
 const nodeResolve = require('resolve').sync;
-const dedent = require('dedent');
 const walk = require('pug-walk');
 
 /*
@@ -91,9 +90,8 @@ module.exports = function (source) {
      * Let webpack know to watch the dependencies
      */
     if (compilation.dependencies && compilation.dependencies.length > 0)
-      compilation.dependencies.forEach((dep) =>
-        loaderContext.addDependency(dep)
-      );
+      for (const dep of compilation.dependencies)
+        loaderContext.addDependency(dep);
   } catch (error) {
     /*
      * Catch errors if needed
@@ -110,15 +108,11 @@ module.exports = function (source) {
     loaderUtils.stringifyRequest(loaderContext, '!' + runtimePath) +
     ');\n\n';
 
+  const compiled =
+    requireRuntimeString + func + '\n\nmodule.exports = template';
+
   /*
    * Return the compiled function to be processes as a JS module now
    */
-  loaderContext.callback(
-    null,
-    dedent`
-    ${requireRuntimeString}
-    ${func.toString()}
-    module.exports = template;
-    `
-  );
+  loaderContext.callback(null, compiled);
 };
