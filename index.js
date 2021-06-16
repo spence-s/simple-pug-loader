@@ -73,7 +73,8 @@ module.exports = function (source) {
       name: 'template',
       inlineRuntimeFunctions: false,
       filters: options.filters,
-      plugins: [plugin].concat(options.plugins || [])
+      plugins: [plugin].concat(options.plugins || []),
+      basedir: options.root || options.basedir
     };
 
     /*
