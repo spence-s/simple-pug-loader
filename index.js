@@ -97,6 +97,12 @@ module.exports = function (source) {
     /*
      * Catch errors if needed
      */
+
+    /*
+     * Add the file where the error occurred as a dependency
+     */
+    loaderContext.addDependency(path.normalize(error.filename));
+
     loaderContext.callback(error);
     return;
   }
