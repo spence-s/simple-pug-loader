@@ -1,7 +1,7 @@
 {
   "name": "simple-pug-loader",
   "description": "Pug loader for webpack that's more simple than the original",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": "Spencer Snyder <sasnyde2@gmail.com> (https://spencersnyder.io)",
   "bugs": {
     "url": "https://github.com/Spence-S/simple-pug-loader/issues",
